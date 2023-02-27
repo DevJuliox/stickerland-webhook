@@ -1,7 +1,9 @@
 {
-  "type": "module",
-  "dependencies": {
-    "@tinyhttp/app": "^2.0.29",
-    "@tinyhttp/logger": "^1.3.0"
+  "scripts": {
+    "start": "vercel dev",
+    "deploy": "vercel deploy --prod"
+  },
+  "devDependencies": {
+    "@vercel/node": "^2.9.8"
   }
 }
