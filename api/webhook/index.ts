@@ -32,8 +32,52 @@ export default async function (req: VercelRequest, res: VercelResponse): Promise
       
       const { text: { body: text } } = message
 
-      if (text !== 'hola') {
-        return res.status(400).end()
+      if (!text.includes('sticker-ID') || text.length !== 31 || text.split(' ').length !== 2) {
+        await fetch(`https://graph.facebook.com/v16.0/${phone_number_id}/messages`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            messaging_product: 'whatsapp',
+            recipient_type: 'individual',
+            to: message.from,
+            type: 'text',
+            text: {
+              body: 'Hola, soy un bot que te envía stickers. Para recibir un sticker, envía el mensaje *sticker-ID [ID del sticker]*'
+            }
+          })
+        }).catch(err => console.error(err))
+
+        return res.status(200).end()
+      }
+
+      const sticker_id = text.split(' ')[1]
+
+      const { status } = await fetch(`https://res.cloudinary.com/jhormanrus/image/upload/v1677629788/stickerland/${sticker_id}.webp`, {
+        method: 'HEAD'
+      })
+
+      if (status !== 200) {
+        await fetch(`https://graph.facebook.com/v16.0/${phone_number_id}/messages`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            messaging_product: 'whatsapp',
+            recipient_type: 'individual',
+            to: message.from,
+            type: 'text',
+            text: {
+              body: 'El sticker que buscas no existe. Intenta con otro.'
+            }
+          })
+        }).catch(err => console.error(err))
+
+        return res.status(200).end()
       }
 
       await fetch(`https://graph.facebook.com/v16.0/${phone_number_id}/messages`, {
@@ -48,13 +92,12 @@ export default async function (req: VercelRequest, res: VercelResponse): Promise
           to: message.from,
           type: 'sticker',
           sticker: {
-            link: 'https://www.tyntec.com/sites/default/files/2020-07/tyntec_rocket_sticker_512px_001_.webp'
+            link: `https://res.cloudinary.com/jhormanrus/image/upload/v1677629788/stickerland/${sticker_id}.webp`
           }
         })
       }).catch(err => console.error(err))
-        .finally(() => {
-          return res.status(200).end()
-        })
+
+      return res.status(200).end()
     }
   }
 
