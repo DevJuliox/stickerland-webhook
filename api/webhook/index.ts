@@ -55,7 +55,7 @@ export default async function (req: VercelRequest, res: VercelResponse): Promise
 
       const sticker_id = text.split(' ')[1]
 
-      const { status } = await fetch(`https://res.cloudinary.com/jhormanrus/image/upload/v1677629788/stickerland/${sticker_id}.webp`, {
+      const { status } = await fetch(`https://res.cloudinary.com/jhormanrus/image/upload/v1677629788/stickerland/${sticker_id}`, {
         method: 'HEAD'
       })
 
@@ -92,7 +92,7 @@ export default async function (req: VercelRequest, res: VercelResponse): Promise
           to: message.from,
           type: 'sticker',
           sticker: {
-            link: `https://res.cloudinary.com/jhormanrus/image/upload/v1677629788/stickerland/${sticker_id}.webp`
+            link: `https://res.cloudinary.com/jhormanrus/image/upload/v1677629788/stickerland/${sticker_id}`
           }
         })
       }).catch(err => console.error(err))
