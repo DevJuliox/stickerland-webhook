@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import type { Webhook } from '../../src/types/message'
 
-const token = process.env.TOKEN
+const token = process.env.WA_TOKEN
 
 export default async function (req: VercelRequest, res: VercelResponse): Promise<VercelResponse> {
   if (req.method === 'GET') {
