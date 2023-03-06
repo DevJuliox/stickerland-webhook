@@ -21,7 +21,34 @@ export default async function (req: VercelRequest, res: VercelResponse): Promise
     const body = (req.body as Webhook).entry[0].changes[0]
     const phone_number_id = body.value.metadata.phone_number_id
 
-    if (body.field !== 'messages' || !body.value.messages) {
+    if (body.field !== 'messages') {
+      return res.status(400).end()
+    }
+
+    if (body.value.statuses) {
+      const error_code = body.value.statuses[0].errors?.[0].code
+      if (error_code === 131053) {
+        await fetch(`https://graph.facebook.com/v16.0/${phone_number_id}/messages`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            messaging_product: 'whatsapp',
+            recipient_type: 'individual',
+            to: body.value.statuses[0].recipient_id,
+            type: 'text',
+            text: {
+              body: 'El sticker que buscas excede el tamaño permitido 😔'
+            }
+          })
+        }).catch(err => console.error(err))
+      }
+      return res.status(200).end()
+    }
+
+    if (!body.value.messages) {
       return res.status(400).end()
     }
 
@@ -32,7 +59,7 @@ export default async function (req: VercelRequest, res: VercelResponse): Promise
       
       const { text: { body: text } } = message
 
-      if (!text.includes('sticker-ID') || text.length !== 31 || text.split(' ').length !== 2) {
+      if (!text.includes('sticker-ID') || text.split(' ').length !== 2) {
         await fetch(`https://graph.facebook.com/v16.0/${phone_number_id}/messages`, {
           method: 'POST',
           headers: {
@@ -75,9 +102,7 @@ o puedes seleccionar uno de los stickers disponibles en https://stickerland.verc
             to: message.from,
             type: 'text',
             text: {
-              body: `El sticker que buscas no existe 😔
-Puedes crear tus propios stickers en https://stickerland.vercel.app
-o puedes seleccionar uno de los stickers disponibles en https://stickerland.vercel.app/galery`
+              body: 'El sticker que buscas no existe 😔'
             }
           })
         }).catch(err => console.error(err))
