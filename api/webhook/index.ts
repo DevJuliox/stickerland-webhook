@@ -45,9 +45,10 @@ export default async function (req: VercelRequest, res: VercelResponse): Promise
             to: message.from,
             type: 'text',
             text: {
-              body: `Hola 👋, soy un bot que te envía stickers 🤖.
-Para recibir un sticker, envía el mensaje *sticker-ID [ID del sticker]* y te lo enviaré.
-Puedes crear tus propios stickers en https://stickerland.vercel.app`
+              body: `Hola 👋, soy un bot que te envía stickers 🤖
+Para recibir un sticker, envía el mensaje *sticker-ID [ID del sticker]* y te lo enviaré 😉
+Puedes crear tus propios stickers en https://stickerland.vercel.app
+o puedes seleccionar uno de los stickers disponibles en https://stickerland.vercel.app/galery`
             }
           })
         }).catch(err => console.error(err))
@@ -74,7 +75,9 @@ Puedes crear tus propios stickers en https://stickerland.vercel.app`
             to: message.from,
             type: 'text',
             text: {
-              body: 'El sticker que buscas no existe. Intenta con otro.'
+              body: `El sticker que buscas no existe 😔
+Puedes crear tus propios stickers en https://stickerland.vercel.app
+o puedes seleccionar uno de los stickers disponibles en https://stickerland.vercel.app/galery`
             }
           })
         }).catch(err => console.error(err))
