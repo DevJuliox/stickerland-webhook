@@ -45,7 +45,9 @@ export default async function (req: VercelRequest, res: VercelResponse): Promise
             to: message.from,
             type: 'text',
             text: {
-              body: 'Hola, soy un bot que te envía stickers. Para recibir un sticker, envía el mensaje *sticker-ID [ID del sticker]*'
+              body: `Hola 👋, soy un bot que te envía stickers 🤖.
+Para recibir un sticker, envía el mensaje *sticker-ID [ID del sticker]* y te lo enviaré.
+Puedes crear tus propios stickers en https://stickerland.vercel.app`
             }
           })
         }).catch(err => console.error(err))

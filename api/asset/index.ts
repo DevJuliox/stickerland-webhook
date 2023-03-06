@@ -25,7 +25,7 @@ const allowCors = fn => async (req, res) => {
 
 async function asset (req: VercelRequest, res: VercelResponse): Promise<VercelResponse> {
   if (req.method === 'GET') {
-    const endpoint = 'https://api.cloudinary.com/v1_1/jhormanrus/resources/image/upload?prefix=stickerland'
+    const endpoint = 'https://api.cloudinary.com/v1_1/jhormanrus/resources/image/upload?prefix=stickerland&max_results=1000'
     const headers = new Headers()
     const base64Credentials = btoa(`${api_key}:${api_secret}`)
     headers.append('Authorization', `Basic ${base64Credentials}`)
@@ -34,6 +34,15 @@ async function asset (req: VercelRequest, res: VercelResponse): Promise<VercelRe
       method: 'GET',
       headers: headers
     }).then(res => res.json())
+      .then(({ resources }: any) => (
+        resources.map((resource: any) => {
+          const { public_id, url } = resource
+          return {
+            public_id: public_id.replace('stickerland/', ''),
+            url
+          }
+        })
+      ))
       .catch(err => console.error(err))
 
     return res.status(200).json(assets)
